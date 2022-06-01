@@ -7,11 +7,12 @@ import (
 	"net/http"
 )
 
-func ParseBody(c *gin.Context, reqBody interface{}) {
+func ParseBody(c *gin.Context, reqBody interface{}) error {
 
 	if err := c.BindJSON(&reqBody); err != nil {
 		fmt.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{"ErrorMessage": err.Error(), "Status": constant.FailedStatus})
-		return
+		return err
 	}
+	return nil
 }

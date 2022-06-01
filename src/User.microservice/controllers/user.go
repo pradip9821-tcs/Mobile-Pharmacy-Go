@@ -137,6 +137,49 @@ func UploadImage(c *gin.Context) {
 	})
 }
 
-func AddAddress() {
+func AddAddress(c *gin.Context) {
+
+	type Body struct {
+		Id                  int64   `json:"id"`
+		PrimaryAddress      string  `json:"primary_address" binding:"required"`
+		AdditionAddressInfo string  `json:"addition_address_info" binding:"required"`
+		AddressType         int     `json:"address_type"`
+		Latitude            float64 `json:"latitude" binding:"required"`
+		Longitude           float64 `json:"longitude" binding:"required"`
+		IsSelect            int     `json:"is_select"`
+		UserId              int     `json:"user_id"`
+	}
+
+	var body Body
+
+	body.UserId, _, _ = utils.GetUserId(c)
+
+	err := utils.ParseBody(c, &body)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println(body)
+
+	if body.IsSelect == 1 {
+		err := utils.IsSelect(c, body.UserId)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+	}
+
+	insert, err := db.Exec(`INSERT INTO addresses (primary_address, addition_address_info, address_type, latitude, longitude, is_select, user_id)
+								values (?,?,?,?,?,?,?)`, body.PrimaryAddress, body.AdditionAddressInfo, body.AddressType, body.Latitude, body.Longitude, body.IsSelect, body.UserId)
+
+	if err != nil {
+		fmt.Println("Data update failed!")
+		return
+	}
+
+	body.Id, _ = insert.LastInsertId()
+
+	utils.SuccessResponse(c, http.StatusOK, "Address added successfully.", body)
 
 }

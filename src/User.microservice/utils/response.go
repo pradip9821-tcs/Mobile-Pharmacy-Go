@@ -29,3 +29,18 @@ func RespondWithError(c *gin.Context, message, err, code, description string, st
 	c.JSON(statusCode, error)
 	return
 }
+
+func SuccessResponse(c *gin.Context, statuscode int, message string, data interface{}) {
+
+	response := struct {
+		Message string      `json:"message"`
+		Data    interface{} `json:"data"`
+		Status  int         `json:"status"`
+	}{
+		Message: message,
+		Data:    data,
+		Status:  constant.SuccessStatus,
+	}
+
+	c.JSON(statuscode, response)
+}
