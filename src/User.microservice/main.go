@@ -20,11 +20,19 @@ func main() {
 
 	router.GET("/get-profile", controllers.GetProfile)
 
-	router.POST("/update-profile", controllers.UpdateProfile)
+	router.PUT("/update-profile", controllers.UpdateProfile)
 
 	router.POST("/upload", controllers.UploadImage)
 
 	router.POST("/add-address", controllers.AddAddress)
+
+	router.GET("/get-address", controllers.GetAddress)
+
+	router.PUT("/update-address", controllers.UpdateAddress)
+
+	router.DELETE("/delete-address", controllers.DeleteAddress)
+
+	router.PUT("/change-password", controllers.ChangePassword)
 
 	router.Run(":8081")
 
