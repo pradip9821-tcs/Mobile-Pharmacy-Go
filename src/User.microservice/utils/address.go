@@ -8,7 +8,9 @@ import (
 	"net/http"
 )
 
-func IsSelect(c *gin.Context, user_id int) error {
+func IsSelect(c *gin.Context, user_id int, method string) error {
+
+	db = services.ConnectDB()
 
 	type Address struct {
 		Id       int64 `json:"id"`
@@ -16,16 +18,27 @@ func IsSelect(c *gin.Context, user_id int) error {
 	}
 
 	var address Address
+	var err error
 
-	db = services.ConnectDB()
-	sqlStatement := `SELECT id, is_select FROM addresses WHERE user_id=? and is_select = 1`
-	row := db.QueryRow(sqlStatement, user_id)
-	err := row.Scan(&address.Id, &address.IsSelect)
+	if method == "Set0" {
+		sqlStatement := `SELECT id, is_select FROM addresses WHERE user_id=? and is_select = 1`
+		row := db.QueryRow(sqlStatement, user_id)
+		err = row.Scan(&address.Id, &address.IsSelect)
+		update := `UPDATE addresses SET is_select=0 where id=?`
+		row = db.QueryRow(update, address.Id)
+	}
+	if method == "Set1" {
+		sqlStatement := `SELECT id, is_select FROM addresses WHERE user_id=? and is_select = 0`
+		row := db.QueryRow(sqlStatement, user_id)
+		err = row.Scan(&address.Id, &address.IsSelect)
+		update := `UPDATE addresses SET is_select=1 where id=?`
+		row = db.QueryRow(update, address.Id)
+	}
 
-	update := `UPDATE addresses SET is_select=0 where id=?`
-	row = db.QueryRow(update, address.Id)
+	db.Close()
 
 	if err != nil {
+		fmt.Println("Sometihng")
 		fmt.Println(err)
 		if err.Error() == constant.NoDataFound {
 			return nil
