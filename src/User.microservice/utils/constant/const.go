@@ -21,6 +21,8 @@ const (
 
 // Common constant
 const (
-	NilString = ""
-	EmptyData = "Data Not Provided!"
+	NilString        = ""
+	EmptyData        = "Data Not Provided!"
+	SetAsNotSelected = "Set0"
+	SetAsSelected    = "Set1"
 )
