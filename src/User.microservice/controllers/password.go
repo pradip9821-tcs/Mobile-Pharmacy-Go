@@ -12,8 +12,8 @@ import (
 func ChangePassword(c *gin.Context) {
 
 	type Body struct {
-		OldPassword string `json:"old_password"`
-		NewPassword string `json:"new_password"`
+		OldPassword string `json:"old_password" binding:"required"`
+		NewPassword string `json:"new_password" binding:"required"`
 	}
 
 	var body Body

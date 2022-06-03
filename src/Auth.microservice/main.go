@@ -26,7 +26,7 @@ func main() {
 	router.Use(middlewares.CorsMiddleware())
 
 	router.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"Message": "Welcome to Mobile Pharmacy App.", "Status": constant.SuccessStatus})
+		c.JSON(http.StatusOK, gin.H{"Message": "Welcome to Auth microservice of Mobile Pharmacy App..", "Status": constant.SuccessStatus})
 	})
 
 	router.POST("/login", controllers.Login)
@@ -37,5 +37,5 @@ func main() {
 
 	router.POST("/forgot-password", controllers.ForgotPassword)
 
-	_ = router.Run(":8080")
+	router.Run(":8080")
 }
