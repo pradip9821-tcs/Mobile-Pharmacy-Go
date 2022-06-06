@@ -1,15 +1,12 @@
 package utils
 
 import (
-	"com.tcs.mobile-pharmacy/user.microservice/services"
-	"com.tcs.mobile-pharmacy/user.microservice/utils/constant"
 	"database/sql"
 	"fmt"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/subosito/gotenv"
-	"net/http"
 	"os"
 	"strconv"
 	"strings"
@@ -49,7 +46,7 @@ func TokenValid(c *gin.Context) error {
 	return nil
 }
 
-func GetUserId(c *gin.Context) (int, int, error) {
+func GetUserId(c *gin.Context) (int, error) {
 
 	tokenString := ExtractToken(c)
 
@@ -62,38 +59,20 @@ func GetUserId(c *gin.Context) (int, int, error) {
 	})
 
 	if err != nil {
-		return 0, 0, err
+		return 0, err
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 
 	if ok && token.Valid {
 		auth0Id := fmt.Sprint(claims["sub"])
-		
+
 		uid, err := strconv.ParseInt(strings.Split(auth0Id, "|")[1], 10, 32)
 		if err != nil {
 			spew.Dump(err)
-			return 0, 0, err
+			return 0, err
 		}
-
-		role := GetUserRole(c, int(uid))
-		return int(uid), role, nil
+		return int(uid), nil
 	}
-	return 0, 0, nil
-}
-
-func GetUserRole(c *gin.Context, userId int) int {
-
-	var role int
-
-	db = services.ConnectDB()
-	sqlStatement := `SELECT role FROM users WHERE id=?`
-	row := db.QueryRow(sqlStatement, userId)
-	err := row.Scan(&role)
-
-	if err != nil {
-		RespondWithError(c, constant.DatabaseError, constant.BadRequestError, err.Error(), constant.InternalError, http.StatusInternalServerError)
-		c.Abort()
-	}
-	return role
+	return 0, nil
 }

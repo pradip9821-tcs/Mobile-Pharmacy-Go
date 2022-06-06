@@ -24,7 +24,7 @@ func GetProfile(c *gin.Context) {
 	var response Response
 	var user models.User
 
-	userId, _, err := utils.GetUserId(c)
+	userId, err := utils.GetUserId(c)
 
 	if err != nil {
 		fmt.Println("Can't get user id!")
@@ -68,7 +68,7 @@ func UpdateProfile(c *gin.Context) {
 
 	var reqBody Body
 
-	userId, _, _ := utils.GetUserId(c)
+	userId, _ := utils.GetUserId(c)
 
 	sqlGetStat := `SELECT id, role,name, email, gender, picture, country_code, phone FROM users WHERE id=?`
 	row := db.QueryRow(sqlGetStat, userId)

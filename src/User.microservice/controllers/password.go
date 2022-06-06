@@ -19,7 +19,7 @@ func ChangePassword(c *gin.Context) {
 	var body Body
 	var UserPasswoed string
 
-	userId, _, _ := utils.GetUserId(c)
+	userId, _ := utils.GetUserId(c)
 	utils.ParseBody(c, &body)
 
 	sqlStatement := `SELECT password FROM users WHERE id=?`

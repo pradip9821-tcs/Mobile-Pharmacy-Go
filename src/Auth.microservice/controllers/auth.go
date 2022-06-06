@@ -43,6 +43,8 @@ func Register(c *gin.Context) {
 	gender := c.PostForm("gender")
 	country_code := c.PostForm("country_code")
 	phone := c.PostForm("phone")
+	//store_name := c.PostForm("store_name")
+	//license_id := c.PostForm("license_id")
 
 	str := `email=` + email +
 		`&password=` + password +
@@ -84,14 +86,16 @@ func Register(c *gin.Context) {
 	_ = json.Unmarshal([]byte(string(body)), &response)
 	fmt.Println(response)
 
-	insert, err := db.Query(`UPDATE users SET role = ?, gender = ?, country_code = ?, phone = ?, picture = ? WHERE id=?`, role, gender, country_code, phone, picture, response.Id)
+	update, err := db.Query(`UPDATE users SET role = ?, gender = ?, country_code = ?, phone = ?, picture = ? WHERE id=?`, role, gender, country_code, phone, picture, response.Id)
 
 	if err != nil {
 		utils.RespondWithError(c, constant.DatabaseError, constant.BadRequestError, constant.EmptyData, constant.InternalError, http.StatusInternalServerError)
 		return
 	}
 
-	defer insert.Close()
+	//update, err = db.Query(`INSERT INTO `)
+
+	defer update.Close()
 
 	utils.SuccessResponse(c, http.StatusOK, constant.SignupSuccess, response)
 }

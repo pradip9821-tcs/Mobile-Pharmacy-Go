@@ -4,8 +4,10 @@ import (
 	"com.tcs.mobile-pharmacy/user.microservice/controllers"
 	"com.tcs.mobile-pharmacy/user.microservice/middlewares"
 	"com.tcs.mobile-pharmacy/user.microservice/services"
+	"com.tcs.mobile-pharmacy/user.microservice/utils/constant"
 	"database/sql"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 var db *sql.DB
@@ -16,6 +18,11 @@ func main() {
 	router := gin.Default()
 
 	router.Use(middlewares.CorsMiddleware())
+
+	router.GET("/", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"Message": "Welcome to User microservice of Mobile Pharmacy App..", "Status": constant.SuccessStatus})
+	})
+
 	router.Use(middlewares.SetMiddlewareAuthentication())
 
 	router.GET("/get-profile", controllers.GetProfile)

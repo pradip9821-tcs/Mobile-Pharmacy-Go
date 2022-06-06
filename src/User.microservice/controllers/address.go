@@ -54,7 +54,7 @@ func AddAddress(c *gin.Context) {
 
 	var body Body
 
-	body.UserId, _, _ = utils.GetUserId(c)
+	body.UserId, _ = utils.GetUserId(c)
 
 	err := utils.ParseBody(c, &body)
 	if err != nil {
@@ -109,7 +109,7 @@ func GetAddress(c *gin.Context) {
 		UpdatedAt           string  `json:"updatedAt"`
 	}
 	var addresses []Address
-	userId, _, _ := utils.GetUserId(c)
+	userId, _ := utils.GetUserId(c)
 
 	sqlStatement := `SELECT * FROM addresses WHERE user_id=?`
 	results, _ := db.Query(sqlStatement, userId)
@@ -201,7 +201,7 @@ func UpdateAddress(c *gin.Context) {
 		return
 	}
 
-	userId, _, _ := utils.GetUserId(c)
+	userId, _ := utils.GetUserId(c)
 
 	if userId != address.UserId {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": constant.Unauthorized, "status": constant.FailedStatus})
