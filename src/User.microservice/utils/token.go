@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"com.tcs.mobile-pharmacy/user.microservice/services"
 	"database/sql"
 	"fmt"
 	"github.com/davecgh/go-spew/spew"
@@ -75,4 +76,20 @@ func GetUserId(c *gin.Context) (int, error) {
 		return int(uid), nil
 	}
 	return 0, nil
+}
+
+func GetUserRole(c *gin.Context, userId int) int {
+
+	var role int
+
+	db = services.ConnectDB()
+	sqlStatement := `SELECT role FROM users WHERE id=?`
+	row := db.QueryRow(sqlStatement, userId)
+	err := row.Scan(&role)
+
+	if err != nil {
+		//RespondWithError(c, constant.DatabaseError, constant.BadRequestError, err.Error(), constant.InternalError, http.StatusInternalServerError)
+		c.Abort()
+	}
+	return role
 }

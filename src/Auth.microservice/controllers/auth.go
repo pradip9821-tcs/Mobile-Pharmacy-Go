@@ -11,6 +11,7 @@ import (
 	"github.com/cloudinary/cloudinary-go"
 	"github.com/cloudinary/cloudinary-go/api/uploader"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/subosito/gotenv"
 	"net/http"
 	"os"
@@ -43,8 +44,6 @@ func Register(c *gin.Context) {
 	gender := c.PostForm("gender")
 	country_code := c.PostForm("country_code")
 	phone := c.PostForm("phone")
-	//store_name := c.PostForm("store_name")
-	//license_id := c.PostForm("license_id")
 
 	str := `email=` + email +
 		`&password=` + password +
@@ -64,6 +63,7 @@ func Register(c *gin.Context) {
 	cld, _ := cloudinary.NewFromURL(os.Getenv("CLOUDINARY_URL"))
 	file, data, err := c.Request.FormFile("picture")
 	if err != nil {
+		fmt.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error":   err,
 			"message": "Failed to upload",
@@ -89,11 +89,39 @@ func Register(c *gin.Context) {
 	update, err := db.Query(`UPDATE users SET role = ?, gender = ?, country_code = ?, phone = ?, picture = ? WHERE id=?`, role, gender, country_code, phone, picture, response.Id)
 
 	if err != nil {
+		fmt.Println(err)
 		utils.RespondWithError(c, constant.DatabaseError, constant.BadRequestError, constant.EmptyData, constant.InternalError, http.StatusInternalServerError)
 		return
 	}
 
-	//update, err = db.Query(`INSERT INTO `)
+	if role == "2" {
+		store_name := c.PostForm("store_name")
+		license_id := c.PostForm("license_id")
+		file, data, err = c.Request.FormFile("store_picture")
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error":   err,
+				"message": "Failed to upload",
+			})
+			return
+		}
+
+		result, err = cld.Upload.Upload(c, file, uploader.UploadParams{
+			PublicID: strings.Split(data.Filename, ".")[0],
+		})
+
+		store_picture := result.URL
+		UUID := uuid.NewString()
+
+		pharmacy_id := strings.ToUpper(strings.Split(UUID, "-")[0] + strings.Split(UUID, "-")[4])
+
+		update, err = db.Query(`INSERT INTO stores (store_name, store_image, license_id, pharmacy_id, user_id) VALUES (?,?,?,?,?)`, store_name, store_picture, license_id, pharmacy_id, response.Id)
+		if err != nil {
+			fmt.Println(err)
+			utils.RespondWithError(c, constant.DatabaseError, constant.BadRequestError, constant.EmptyData, constant.InternalError, http.StatusInternalServerError)
+			return
+		}
+	}
 
 	defer update.Close()
 

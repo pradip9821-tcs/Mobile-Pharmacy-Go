@@ -38,7 +38,6 @@ func IsSelect(c *gin.Context, user_id int, method string) error {
 	db.Close()
 
 	if err != nil {
-		fmt.Println("Sometihng")
 		fmt.Println(err)
 		if err.Error() == constant.NoDataFound {
 			return nil

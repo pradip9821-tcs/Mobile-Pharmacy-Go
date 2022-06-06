@@ -84,7 +84,8 @@ func AddAddress(c *gin.Context) {
 			return
 		}
 		// need to central error handling middleware
-		fmt.Println("Data update failed!")
+		fmt.Println(err)
+		fmt.Println("Data insertion failed!")
 		return
 	}
 
