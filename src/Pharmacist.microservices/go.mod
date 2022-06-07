@@ -2,7 +2,13 @@ module com.tcs.mobile-pharmacy/pharmacist.microservice
 
 go 1.18
 
-require github.com/gin-gonic/gin v1.8.1
+require (
+	github.com/davecgh/go-spew v1.1.1
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/gin-gonic/gin v1.8.1
+	github.com/go-sql-driver/mysql v1.6.0
+	github.com/subosito/gotenv v1.4.0
+)
 
 require (
 	github.com/gin-contrib/sse v0.1.0 // indirect

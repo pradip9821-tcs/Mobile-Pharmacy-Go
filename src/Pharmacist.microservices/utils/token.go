@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"com.tcs.mobile-pharmacy/pharmacist.microservice/services"
 	"database/sql"
 	"fmt"
 	"github.com/davecgh/go-spew/spew"
@@ -46,7 +47,7 @@ func TokenValid(c *gin.Context) error {
 	return nil
 }
 
-func GetUserId(c *gin.Context) (int, error) {
+func GetUserId(c *gin.Context) (int, int, error) {
 
 	tokenString := ExtractToken(c)
 
@@ -59,7 +60,7 @@ func GetUserId(c *gin.Context) (int, error) {
 	})
 
 	if err != nil {
-		return 0, err
+		return 0, 0, err
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
@@ -70,9 +71,27 @@ func GetUserId(c *gin.Context) (int, error) {
 		uid, err := strconv.ParseInt(strings.Split(auth0Id, "|")[1], 10, 32)
 		if err != nil {
 			spew.Dump(err)
-			return 0, err
+			return 0, 0, err
 		}
-		return int(uid), nil
+
+		role := GetUserRole(c, int(uid))
+		return int(uid), role, nil
 	}
-	return 0, nil
+	return 0, 0, nil
+}
+
+func GetUserRole(c *gin.Context, userId int) int {
+
+	var role int
+
+	db = services.ConnectDB()
+	sqlStatement := `SELECT role FROM users WHERE id=?`
+	row := db.QueryRow(sqlStatement, userId)
+	err := row.Scan(&role)
+
+	if err != nil {
+		//RespondWithError(c, constant.DatabaseError, constant.BadRequestError, err.Error(), constant.InternalError, http.StatusInternalServerError)
+		c.Abort()
+	}
+	return role
 }

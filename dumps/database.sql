@@ -104,3 +104,23 @@ CREATE TABLE `medicines` (
                              KEY `prescriptionId` (`prescription_id`),
                              CONSTRAINT `medicines_ibfk_1` FOREIGN KEY (`prescription_id`) REFERENCES `prescriptions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=108 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+
+CREATE TABLE `quotes` (
+                          `id` int(11) NOT NULL AUTO_INCREMENT,
+                          `store_name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+                          `price` decimal(5,2) NOT NULL,
+                          `text_note` text COLLATE utf8_unicode_ci NOT NULL,
+                          `is_test` tinyint(1) DEFAULT '1',
+                          `is_verify` tinyint(1) DEFAULT '1',
+                          `is_active` tinyint(1) DEFAULT '1',
+                          `is_delete` tinyint(1) DEFAULT '0',
+                          `createdAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+                          `updatedAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                          `store_id` int(11) DEFAULT NULL,
+                          `prescription_id` int(11) DEFAULT NULL,
+                          PRIMARY KEY (`id`),
+                          KEY `storeId` (`store_id`),
+                          KEY `prescriptionId` (`prescription_id`),
+                          CONSTRAINT `quotes_ibfk_1` FOREIGN KEY (`store_id`) REFERENCES `stores` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+                          CONSTRAINT `quotes_ibfk_2` FOREIGN KEY (`prescription_id`) REFERENCES `prescriptions` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci

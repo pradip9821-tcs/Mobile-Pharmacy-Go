@@ -403,6 +403,7 @@ func GetPrescription(c *gin.Context) {
 		PrescriptionImages interface{} `json:"prescription_images"`
 		Medicines          interface{} `json:"medicines"`
 		Status             int64       `json:"status"`
+		TotalQuotes        int64       `json:"total_quotes"`
 		CreatedAt          string      `json:"created_at"`
 		UpdatedAt          string      `json:"updated_at"`
 		UserId             int64       `json:"user_id"`
@@ -435,6 +436,15 @@ func GetPrescription(c *gin.Context) {
 
 			var images []Image
 			var medicines []Medicine
+
+			quotes, err := db.Query(`SELECT COUNT(id) FROM quotes WHERE prescription_id=?`, prescription.Id)
+			if err != nil {
+				utils.ErrorResponse(c, http.StatusInternalServerError, constant.FailedTOFetchPrescription, "Something went wrong!", err)
+				return
+			}
+			for quotes.Next() {
+				quotes.Scan(&prescription.TotalQuotes)
+			}
 
 			img, err := db.Query(`SELECT id, url, type FROM prescription_images WHERE prescription_id=?`, prescription.Id)
 			if err != nil {
@@ -478,6 +488,15 @@ func GetPrescription(c *gin.Context) {
 			var prescription Prescriptions
 
 			result.Scan(&prescription.Id, &prescription.Name, &prescription.TextNote, &prescription.Status, &prescription.CreatedAt, &prescription.UpdatedAt, &prescription.UserId)
+
+			quotes, err := db.Query(`SELECT COUNT(id) FROM quotes WHERE prescription_id=?`, prescription.Id)
+			if err != nil {
+				utils.ErrorResponse(c, http.StatusInternalServerError, constant.FailedTOFetchPrescription, "Something went wrong!", err)
+				return
+			}
+			for quotes.Next() {
+				quotes.Scan(&prescription.TotalQuotes)
+			}
 
 			var images []Image
 			var medicines []Medicine

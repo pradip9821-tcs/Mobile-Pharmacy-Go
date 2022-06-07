@@ -2,15 +2,16 @@ package constant
 
 // Error constant
 const (
-	FailedStatus       = 0
-	InternalError      = "Somethings Went Wrong!"
-	DatabaseError      = "Database Error!"
-	UserNotFound       = "User doesn't exist!"
-	BadRequestError    = "Bad Request Error!"
-	InvalidAccess      = "invalid_access"
-	FailedToFetchToken = "Failed to fetch token!"
-	NoDataFound        = "sql: no rows in result set"
-	Unauthorized       = "Unauthorized"
+	FailedStatus          = 0
+	InternalError         = "Somethings Went Wrong!"
+	DatabaseError         = "Database Error!"
+	UserNotFound          = "User doesn't exist!"
+	BadRequestError       = "Bad Request Error!"
+	InvalidAccess         = "invalid_access"
+	FailedToFetchToken    = "Failed to fetch token!"
+	NoDataFound           = "sql: no rows in result set"
+	Unauthorized          = "Unauthorized"
+	FailedTOFetchRequests = "Failed To Fetched Requests"
 )
 
 // Success constant
