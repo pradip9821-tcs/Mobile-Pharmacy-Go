@@ -55,3 +55,52 @@ CREATE TABLE `addresses` (
                              KEY `userId` (`user_id`),
                              CONSTRAINT `addresses_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+
+CREATE TABLE `prescriptions` (
+                                 `id` int(11) NOT NULL AUTO_INCREMENT,
+                                 `name` varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
+                                 `text_note` text COLLATE utf8_unicode_ci NOT NULL,
+                                 `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0 = pending, 1  = completed, 2 = Rejected',
+                                 `is_test` tinyint(1) DEFAULT '1',
+                                 `is_verify` tinyint(1) DEFAULT '1',
+                                 `is_active` tinyint(1) DEFAULT '1',
+                                 `is_delete` tinyint(1) DEFAULT '0',
+                                 `createdAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+                                 `updatedAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                 `user_id` int(11) DEFAULT NULL,
+                                 PRIMARY KEY (`id`),
+                                 KEY `userId` (`user_id`),
+                                 CONSTRAINT `prescriptions_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=92 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+
+CREATE TABLE `prescription_images` (
+                                       `id` int(11) NOT NULL AUTO_INCREMENT,
+                                       `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+                                       `url` text COLLATE utf8_unicode_ci NOT NULL,
+                                       `type` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+                                       `is_test` tinyint(1) DEFAULT '1',
+                                       `is_verify` tinyint(1) DEFAULT '1',
+                                       `is_active` tinyint(1) DEFAULT '1',
+                                       `is_delete` tinyint(1) DEFAULT '0',
+                                       `createdAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+                                       `updatedAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                       `prescription_id` int(11) DEFAULT NULL,
+                                       PRIMARY KEY (`id`),
+                                       KEY `prescriptionId` (`prescription_id`),
+                                       CONSTRAINT `prescription_images_ibfk_1` FOREIGN KEY (`prescription_id`) REFERENCES `prescriptions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=90 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+
+CREATE TABLE `medicines` (
+                             `id` int(11) NOT NULL AUTO_INCREMENT,
+                             `name` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+                             `is_test` tinyint(1) DEFAULT '1',
+                             `is_verify` tinyint(1) DEFAULT '1',
+                             `is_active` tinyint(1) DEFAULT '1',
+                             `is_delete` tinyint(1) DEFAULT '0',
+                             `createdAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+                             `updatedAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                             `prescription_id` int(11) DEFAULT NULL,
+                             PRIMARY KEY (`id`),
+                             KEY `prescriptionId` (`prescription_id`),
+                             CONSTRAINT `medicines_ibfk_1` FOREIGN KEY (`prescription_id`) REFERENCES `prescriptions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=108 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
