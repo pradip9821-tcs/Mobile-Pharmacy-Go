@@ -62,7 +62,7 @@ func GetRequests(c *gin.Context) {
 
 	var prescriptions []Prescriptions
 
-	result, err := db.Query(`SELECT id, name, text_note, status,createdAt, updatedAt, user_id FROM prescriptions where status=0 LIMIT ? OFFSET ?`, limit, offset)
+	result, err := db.Query(`SELECT id, name, text_note, status,createdAt, updatedAt, user_id FROM prescriptions where status=0 ORDER BY id DESC LIMIT ? OFFSET ?`, limit, offset)
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusInternalServerError, constant.FailedTOFetchRequests, "Something went wrong!", err)
 		return

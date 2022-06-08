@@ -24,5 +24,11 @@ func main() {
 
 	router.POST("/add-quote", controllers.AddQuotes)
 
+	router.GET("/get-offline-order", controllers.GetOfflineOrder)
+
+	router.GET("/collect-payment-offline", controllers.CollectPaymentOffline)
+
+	router.GET("/change-order-status", controllers.ChangeOrderStatus)
+
 	router.Run(":8083")
 }

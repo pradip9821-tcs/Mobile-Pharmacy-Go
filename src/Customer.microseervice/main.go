@@ -42,5 +42,9 @@ func main() {
 
 	router.POST("/checkout", controllers.Checkout)
 
+	router.POST("/change-payment-status", controllers.ChangePaymentStatus)
+
+	router.GET("/get-order-status", controllers.GetOrderStatus)
+
 	router.Run(":8082")
 }
