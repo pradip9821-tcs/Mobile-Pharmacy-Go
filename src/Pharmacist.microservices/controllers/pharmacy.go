@@ -150,8 +150,7 @@ func AddQuotes(c *gin.Context) {
 
 	if err := c.BindJSON(&quote); err != nil {
 		fmt.Println(err)
-		utils.ErrorResponse(c, http.StatusBadRequest, "Failed to post quotes", "Please post all required data into body!", err)
-		//c.JSON(http.StatusBadRequest, gin.H{"ErrorMessage": err.Error(), "Status": constant.FailedStatus})
+		utils.ErrorResponse(c, http.StatusBadRequest, "Failed to post quotes", err.Error(), err)
 		return
 	}
 

@@ -12,6 +12,8 @@ import (
 	"github.com/cloudinary/cloudinary-go/api/uploader"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/stripe/stripe-go/v72"
+	customer "github.com/stripe/stripe-go/v72/customer"
 	"github.com/subosito/gotenv"
 	"net/http"
 	"os"
@@ -45,21 +47,6 @@ func Register(c *gin.Context) {
 	country_code := c.PostForm("country_code")
 	phone := c.PostForm("phone")
 
-	str := `email=` + email +
-		`&password=` + password +
-		`&name=` + name +
-		`&client_id=` + os.Getenv("CLIENT_ID") +
-		`&connection=` + os.Getenv("CONNECTION")
-
-	body := utils.APIHandler(constant.Auth0SignupAPI, str)
-
-	_ = json.Unmarshal([]byte(string(body)), &error)
-
-	if error.Code != constant.NilString {
-		utils.RespondWithError(c, constant.FailedToSignup, error.Error, error.Code, error.ErrorDescription, http.StatusBadRequest)
-		return
-	}
-
 	cld, _ := cloudinary.NewFromURL(os.Getenv("CLOUDINARY_URL"))
 	file, data, err := c.Request.FormFile("picture")
 	if err != nil {
@@ -82,11 +69,38 @@ func Register(c *gin.Context) {
 
 	picture := result.URL
 
+	fmt.Println("PIC --->", picture)
+
+	str := `email=` + email +
+		`&password=` + password +
+		`&name=` + name +
+		`&client_id=` + os.Getenv("CLIENT_ID") +
+		`&connection=` + os.Getenv("CONNECTION")
+
+	body := utils.APIHandler(constant.Auth0SignupAPI, str)
+
+	_ = json.Unmarshal([]byte(string(body)), &error)
+
+	if error.Code != constant.NilString {
+		utils.RespondWithError(c, constant.FailedToSignup, error.Error, error.Code, error.ErrorDescription, http.StatusBadRequest)
+		return
+	}
+
 	fmt.Println(string(body))
 	_ = json.Unmarshal([]byte(string(body)), &response)
-	fmt.Println(response)
 
-	update, err := db.Query(`UPDATE users SET role = ?, gender = ?, country_code = ?, phone = ?, picture = ? WHERE id=?`, role, gender, country_code, phone, picture, response.Id)
+	stripe.Key = os.Getenv("STRIPE_SK")
+
+	params := &stripe.CustomerParams{
+		Description: stripe.String("My First Test Customer For Mobile Pharmacy app"),
+		Email:       stripe.String(email),
+		Name:        stripe.String(name),
+		Phone:       stripe.String(phone),
+	}
+
+	cus, _ := customer.New(params)
+
+	update, err := db.Query(`UPDATE users SET role = ?, gender = ?, country_code = ?, phone = ?, picture = ?, stripe_id = ? WHERE id=?`, role, gender, country_code, phone, picture, cus.ID, response.Id)
 
 	if err != nil {
 		fmt.Println(err)

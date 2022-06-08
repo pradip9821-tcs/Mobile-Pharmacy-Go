@@ -8,6 +8,7 @@ require (
 	github.com/gin-gonic/gin v1.8.0
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/google/uuid v1.3.0
+	github.com/stripe/stripe-go/v72 v72.112.0
 	github.com/subosito/gotenv v1.4.0
 )
 

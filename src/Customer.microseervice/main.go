@@ -36,5 +36,11 @@ func main() {
 
 	router.GET("/get-prescription", controllers.GetPrescription)
 
+	router.POST("/add-card", controllers.AddCard)
+
+	router.GET("/get-cards", controllers.GetCards)
+
+	router.POST("/checkout", controllers.Checkout)
+
 	router.Run(":8082")
 }

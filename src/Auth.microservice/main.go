@@ -37,5 +37,7 @@ func main() {
 
 	router.POST("/forgot-password", controllers.ForgotPassword)
 
+	router.POST("/create", controllers.Create)
+
 	router.Run(":8080")
 }

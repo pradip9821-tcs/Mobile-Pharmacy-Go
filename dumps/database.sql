@@ -124,3 +124,63 @@ CREATE TABLE `quotes` (
                           CONSTRAINT `quotes_ibfk_1` FOREIGN KEY (`store_id`) REFERENCES `stores` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
                           CONSTRAINT `quotes_ibfk_2` FOREIGN KEY (`prescription_id`) REFERENCES `prescriptions` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+
+CREATE TABLE `cards` (
+                         `id` int(11) NOT NULL AUTO_INCREMENT,
+                         `card_id` varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
+                         `is_test` tinyint(1) DEFAULT '1',
+                         `is_verify` tinyint(1) DEFAULT '0',
+                         `is_active` tinyint(1) DEFAULT '0',
+                         `is_delete` tinyint(1) DEFAULT '0',
+                         `createdAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+                         `updatedAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                         `user_id` int(11) DEFAULT NULL,
+                         PRIMARY KEY (`id`),
+                         KEY `userId` (`user_id`),
+                         CONSTRAINT `cards_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+
+CREATE TABLE `orders` (
+                          `id` int(11) NOT NULL AUTO_INCREMENT,
+                          `payment_method` tinyint(1) DEFAULT '0',
+                          `status` tinyint(1) DEFAULT '0',
+                          `checkout_type` tinyint(1) DEFAULT '0',
+                          `delivery_charge` float DEFAULT NULL,
+                          `amount` float DEFAULT NULL,
+                          `is_test` tinyint(1) DEFAULT '0',
+                          `is_verify` tinyint(1) DEFAULT '0',
+                          `is_active` tinyint(1) DEFAULT '1',
+                          `is_delete` tinyint(1) DEFAULT '0',
+                          `createdAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+                          `updatedAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                          `user_id` int(11) DEFAULT NULL,
+                          `store_id` int(11) DEFAULT NULL,
+                          `quote_id` int(11) DEFAULT NULL,
+                          PRIMARY KEY (`id`),
+                          KEY `userId` (`user_id`),
+                          KEY `storeId` (`store_id`),
+                          KEY `quoteId` (`quote_id`),
+                          CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+                          CONSTRAINT `orders_ibfk_2` FOREIGN KEY (`store_id`) REFERENCES `stores` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+                          CONSTRAINT `orders_ibfk_3` FOREIGN KEY (`quote_id`) REFERENCES `quotes` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+
+CREATE TABLE `payments` (
+                            `id` int(11) NOT NULL AUTO_INCREMENT,
+                            `transaction_id` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+                            `amount` float DEFAULT NULL,
+                            `status` enum('PENDING','SUCCESS','FAILED') COLLATE utf8_unicode_ci DEFAULT 'PENDING' COMMENT 'PENDING, SUCCESS, FAILED',
+                            `is_test` tinyint(1) DEFAULT '0',
+                            `createdAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+                            `updatedAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                            `user_id` int(11) DEFAULT NULL,
+                            `store_id` int(11) DEFAULT NULL,
+                            `order_id` int(11) DEFAULT NULL,
+                            PRIMARY KEY (`id`),
+                            KEY `userId` (`user_id`),
+                            KEY `storeId` (`store_id`),
+                            KEY `orderId` (`order_id`),
+                            CONSTRAINT `payments_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+                            CONSTRAINT `payments_ibfk_2` FOREIGN KEY (`store_id`) REFERENCES `stores` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+                            CONSTRAINT `payments_ibfk_3` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
