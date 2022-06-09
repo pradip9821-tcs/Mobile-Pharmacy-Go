@@ -7,7 +7,7 @@ COPY go.sum ./
 
 RUN go mod download
 
-COPY controllers .
+COPY . .
 
 ENV PORT 8082
 
